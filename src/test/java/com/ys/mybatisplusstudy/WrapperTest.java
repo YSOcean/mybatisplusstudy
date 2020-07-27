@@ -1,6 +1,9 @@
 package com.ys.mybatisplusstudy;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ys.mybatisplusstudy.entry.User;
 import com.ys.mybatisplusstudy.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
@@ -446,4 +449,44 @@ public class WrapperTest {
         List<User> list = userMapper.selectList(queryWrapper);
         System.out.println(list);
     }
+
+    /**
+     * 获取 Lambda 的两种方式
+     */
+    public void testLmbda(){
+        //两种方式
+        LambdaQueryWrapper queryLambda = new QueryWrapper().lambda();
+        LambdaQueryWrapper lambdaQueryWrapper = new LambdaQueryWrapper<>();
+
+        //两种方式
+        LambdaUpdateWrapper updateLambda = new UpdateWrapper().lambda();
+        LambdaUpdateWrapper lambdaUpdateWrapper = new LambdaUpdateWrapper();
+    }
+
+/**
+ * LambdaQueryWrapper
+ * SQL实例：SELECT id,user_name,user_age FROM user WHERE (id = ? AND user_age <> ?)
+ */
+@Test
+public void testLambdaQueryWrapper(){
+    LambdaQueryWrapper<User> queryLambda = new LambdaQueryWrapper<>();
+    queryLambda.eq(User::getId,"1").ne(User::getUserAge,25);
+    List<User> users = userMapper.selectList(queryLambda);
+    System.out.println(users);
+
+}
+
+/**
+ * LambdaQueryWrapper
+ * SQL实例：UPDATE user SET user_name=? WHERE (user_name = ?)
+ */
+@Test
+public void testLambdaUpdateWrapper(){
+    User user = new User();
+    user.setUserName("LambdaUpdateWrapper");
+    LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+    userLambdaUpdateWrapper.eq(User::getUserName,"IT可乐");
+    userMapper.update(user,userLambdaUpdateWrapper);
+
+}
 }
